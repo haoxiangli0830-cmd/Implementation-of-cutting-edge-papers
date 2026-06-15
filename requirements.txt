@@ -1,4 +1,5 @@
 # AI Quant Research — shared environment
+# Core data / backtest / stats
 pandas>=2.0
 numpy>=1.24
 scipy>=1.10
@@ -7,5 +8,17 @@ yfinance>=0.2.40
 pyarrow>=14.0
 scikit-learn>=1.3
 statsmodels>=0.14
-# Event-driven backtests for later projects (optional; in-house vectorized engine is the default)
+requests>=2.31
+
+# Deep-learning papers (Deep Hedging, Price-Trends CNN, ...)
+# Install the CPU build separately if you don't have CUDA:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.2
+
+# LLM track (FinBERT sentiment + sentence embeddings + benchmark datasets)
+transformers>=4.40
+sentence-transformers>=2.7
+datasets>=2.19
+
+# Event-driven backtests for later projects (optional; in-house vectorized engine is default)
 # vectorbt>=0.26
