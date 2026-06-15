@@ -1,0 +1,11 @@
+# AI Quant Research — shared environment
+pandas>=2.0
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+yfinance>=0.2.40
+pyarrow>=14.0
+scikit-learn>=1.3
+statsmodels>=0.14
+# Event-driven backtests for later projects (optional; in-house vectorized engine is the default)
+# vectorbt>=0.26
