@@ -36,7 +36,7 @@ PROJECTS: list[Project] = [
     Project("eq-f4-deep-statarb", "E", "frontier", "Guijarro-Ordonez, Pelger & Zanotti (2024) Deep Learning Stat-Arb"),
     Project("eq-f5-alphaportfolio", "E", "frontier", "Cong et al. (2021) AlphaPortfolio"),
     Project("eq-f6-price-trends-cnn", "E", "frontier", "Jiang, Kelly & Xiu (2023) Re-Imag(in)ing Price Trends", "done"),
-    Project("llm-f1-chatgpt-returns", "L", "frontier", "Lopez-Lira & Tang (2023) Can ChatGPT Forecast Returns"),
+    Project("llm-f1-chatgpt-returns", "L", "frontier", "Lopez-Lira & Tang (2023) Can ChatGPT Forecast Returns", "done"),
     Project("llm-f2-fin-statements", "L", "frontier", "Kim, Muhn & Nikolaev (2024) Financial Statement Analysis w/ LLMs"),
     Project("llm-f3-llm-embeddings", "L", "frontier", "Chen, Kelly & Xiu (2023) Expected Returns and LLMs"),
     Project("llm-f4-chatgpt-corporate", "L", "frontier", "Jha et al. (2024) ChatGPT and Corporate Policies"),

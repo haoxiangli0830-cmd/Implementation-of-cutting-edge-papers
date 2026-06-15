@@ -16,6 +16,16 @@ _ROOT = Path(__file__).resolve().parents[2]
 CACHE = _ROOT / "data_store" / "news"
 
 
+def _key_from_dotenv() -> str | None:
+    """Read FINNHUB_API_KEY from a .env at the program root, if present."""
+    env = _ROOT / ".env"
+    if env.exists():
+        for line in env.read_text().splitlines():
+            if line.startswith("FINNHUB_API_KEY"):
+                return line.split("=", 1)[1].strip()
+    return None
+
+
 def get_recent_news(tickers: list[str]) -> pd.DataFrame:
     """Most-recent headlines per ticker (free, yfinance). Live snapshot only."""
     import yfinance as yf
@@ -38,7 +48,7 @@ def get_recent_news(tickers: list[str]) -> pd.DataFrame:
 def get_finnhub_news(tickers: list[str], start: str, end: str,
                      api_key: str | None = None) -> pd.DataFrame:
     """Historical company news via Finnhub (free tier ~1 yr). Cached per ticker."""
-    api_key = api_key or os.environ.get("FINNHUB_API_KEY")
+    api_key = api_key or os.environ.get("FINNHUB_API_KEY") or _key_from_dotenv()
     if not api_key:
         raise RuntimeError("No Finnhub key. Set FINNHUB_API_KEY or pass api_key. "
                            "Free registration: https://finnhub.io/register")
