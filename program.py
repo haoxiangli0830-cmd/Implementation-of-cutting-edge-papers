@@ -13,6 +13,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 PAPERS = ROOT / "Papers"
 
+# which side of the desk each track belongs to
+SIDE = {"E": "buy_side", "M": "buy_side", "C": "buy_side", "L": "buy_side",
+        "V": "sell_side", "Q": "sell_side", "R": "sell_side"}
+
 
 @dataclass(frozen=True)
 class Project:
@@ -44,26 +48,42 @@ PROJECTS: list[Project] = [
     Project("vo-f2-rough-vol", "V", "frontier", "Gatheral, Jaisson & Rosenbaum (2018) Volatility is Rough"),
     Project("vo-f3-deep-vol-calib", "V", "frontier", "Horvath et al. (2021) Deep Learning Volatility"),
     Project("vo-f4-quant-gans", "V", "frontier", "Wiese et al. (2020) Quant GANs"),
+    Project("vo-f5-neural-sde", "V", "frontier", "Gierjatowicz et al. (2020) Robust Pricing & Hedging via Neural SDEs", "in_progress"),
+    Project("vo-f6-sig-wgan", "V", "frontier", "Ni et al. (2021) Sig-Wasserstein GANs for Time Series"),
     Project("ms-f1-deeplob", "Q", "frontier", "Zhang, Zohren & Roberts (2019) DeepLOB"),
     Project("ms-f2-price-formation", "Q", "frontier", "Sirignano & Cont (2019) Universal Price Formation"),
     Project("ms-f3-rl-execution", "Q", "frontier", "Ning, Lin & Jaimungal (2021) Deep RL Optimal Execution"),
     Project("cr-f1-crypto-factors", "C", "frontier", "Liu, Tsyvinski & Wu (2022) Crypto Risk Factors", "done"),
     Project("cr-f2-text-returns-sestm", "C", "frontier", "Ke, Kelly & Xiu (2019) Predicting Returns with Text"),
+    # --- Bank risk-quant track (sell-side risk: market / counterparty / credit) ---
+    Project("rk-01-var-es-backtesting", "R", "scaffolding", "Market-risk VaR/ES + Basel backtesting (Kupiec/Christoffersen/FRTB)", "done"),
+    Project("rk-02-cva-exposure", "R", "scaffolding", "Counterparty exposure & CVA (EPE/PFE, Monte-Carlo)", "done"),
+    Project("rk-03-credit-risk", "R", "scaffolding", "Credit risk: Merton DtD + Vasicek/CreditMetrics portfolio loss", "done"),
+    Project("rk-04-evt-copulas", "R", "scaffolding", "Tail risk: Extreme Value Theory + copulas", "done"),
+    Project("rk-f1-differential-ml", "R", "frontier", "Huge & Savine (2020, Danske Bank) Differential Machine Learning"),
+    Project("rk-f2-deep-xva", "R", "frontier", "Deep learning for XVA / neural CVA exposure"),
+    Project("rk-f3-ml-var", "R", "frontier", "Quantile-regression neural nets for VaR/ES"),
 ]
 
 _ICON = {"todo": "[ ]", "in_progress": "[~]", "done": "[x]"}
 
 
 def main() -> None:
-    print("\nAI Quant Research — project board\n" + "=" * 60)
-    for tier in ("scaffolding", "frontier"):
-        print(f"\n{tier.upper()}")
-        for p in PROJECTS:
-            if p.tier != tier:
+    done = sum(p.status == "done" for p in PROJECTS)
+    print("\nAI Quant Research — project board"
+          f"   ({done}/{len(PROJECTS)} done)\n" + "=" * 64)
+    for side, label in (("buy_side", "BUY-SIDE  (alpha / return prediction)"),
+                        ("sell_side", "SELL-SIDE  (pricing · execution · bank risk)")):
+        print(f"\n### {label}")
+        for tier in ("scaffolding", "frontier"):
+            tier_projects = [p for p in PROJECTS if SIDE[p.track] == side and p.tier == tier]
+            if not tier_projects:
                 continue
-            has_pdf = (PAPERS / p.id / "paper.pdf").exists()
-            pdf = "pdf" if has_pdf else "   "
-            print(f"  {_ICON[p.status]} {pdf}  {p.id:<26} {p.paper}")
+            print(f"  -- {tier} --")
+            for p in tier_projects:
+                has_pdf = (PAPERS / side / p.id / "paper.pdf").exists()
+                pdf = "pdf" if has_pdf else "   "
+                print(f"  {_ICON[p.status]} {pdf}  {p.id:<26} {p.paper}")
     print()
 
 

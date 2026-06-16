@@ -18,9 +18,11 @@ paper goes through the same rigorous pipeline and lands in a searchable gallery 
 an honest verdict. The emphasis on *replication rigor* — not just "did I get a nice
 backtest" but "is this real?" — is the whole point.
 
-**Focus:** buy-side, multi-asset (equities & factors, cross-asset/macro, crypto,
-volatility/derivatives, deep microstructure), with a deliberate bias toward recent
-machine-learning / deep-learning / LLM papers.
+**Focus:** multi-asset, spanning both the **buy-side** (equities & factors,
+cross-asset/macro, crypto, volatility, microstructure) and the **sell-side
+bank risk-quant** function (market risk, counterparty/XVA, credit, model
+validation — the UBS/Santander/JPM risk-desk world), with a deliberate bias toward
+recent machine-learning / deep-learning / LLM research.
 
 ---
 
@@ -62,9 +64,13 @@ factor that looks profitable but isn't (see crypto momentum below).
 │   ├── backtest/         #   vectorized portfolio engine + cost model (no look-ahead by design)
 │   ├── evaluation/       #   metrics + the Deflated-Sharpe rigor layer
 │   ├── models/           #   PyTorch helpers (seeding, device)
-│   └── nlp/              #   FinBERT sentiment + sentence-transformer embeddings
+│   ├── nlp/              #   FinBERT sentiment + sentence-transformer embeddings
+│   └── risk/             #   VaR / Expected Shortfall + Basel backtesting (bank risk-quant)
 └── Papers/
-    └── <track>-<id>/     # one folder per paper: paper.pdf + the 6 loop artifacts
+    ├── buy_side/         # alpha / return prediction (equities, macro, crypto, LLM)
+    │   └── <id>/         #   one folder per paper: paper.pdf + the 6 loop artifacts
+    └── sell_side/        # pricing · execution · bank risk (vol, microstructure, rk-*)
+        └── <id>/
 ```
 
 **Design principle:** `core/` is a *paper-agnostic library*; each `Papers/<id>/` is a
@@ -78,24 +84,19 @@ unavoidable.
 
 ## Project gallery
 
-Two layers: **scaffolding** (canonical papers, to build and validate `core/`) and
-**frontier** (recent ML/DL/LLM research — the real target). Status: ✅ done · ☐ planned.
+Split by desk (`Papers/buy_side/` vs `Papers/sell_side/`); within each, **scaffolding**
+(canonical, to build `core/`) then **frontier** (recent ML/DL/LLM — the real target).
+Status: ✅ done · ☐ planned.
 
-### Scaffolding
+### 🟦 Buy-side — alpha & return prediction
 | ID | Paper | Status | Headline result |
 |----|-------|--------|-----------------|
 | `mx-00-tsmom` | Time-Series Momentum (Moskowitz-Ooi-Pedersen 2012) | ✅ | Net Sharpe 0.55, Deflated Sharpe 0.98 (passes) |
 | `eq-00-fama-french` | Fama-French + Carhart | ✅ | Premia replicate; value/size Sharpe **negative since 2010** |
-| `vo-00-har-optiver` | HAR realized-volatility (Corsi 2009) | ✅ | OOS R² 0.50 vs 0.40 random-walk (−17.5% error) |
 | `mx-00-carry` | Carry (Koijen et al. 2018) | ☐ | — |
-
-### Frontier
-| ID | Paper | Status | Headline result |
-|----|-------|--------|-----------------|
 | `eq-f1-eapml-gkx2020` | Empirical Asset Pricing via ML (Gu-Kelly-Xiu 2020) | ✅ | Nonlinear beats linear; GBM L/S Sharpe 0.65 |
 | `eq-f2-virtue-complexity` | Virtue of Complexity (Kelly-Malamud-Zhou 2024) | ✅ | Double-descent recovery shows; timing gain modest |
 | `eq-f6-price-trends-cnn` | (Re-)Imag(in)ing Price Trends (Jiang-Kelly-Xiu 2023) | ✅ | CNN on chart images > coin-flip OOS (weak, overfits) |
-| `vo-f1-deep-hedging` | Deep Hedging (Buehler et al. 2019) | ✅ | Beats Black-Scholes delta on mean + tail under costs |
 | `cr-f1-crypto-factors` | Crypto Risk Factors (Liu-Tsyvinski-Wu 2022) | ✅ | Market/size replicate; **momentum fails** (DSR 0.46) |
 | `llm-f1-chatgpt-returns` | Can ChatGPT Forecast Returns (Lopez-Lira-Tang 2023) | ✅ | FinBERT 84% acc; sentiment L/S Sharpe 1.44 (thin sample) |
 | `eq-f3-deep-learning-apt` | Deep Learning in Asset Pricing (Chen-Pelger-Zhu 2024) | ☐ | — |
@@ -103,15 +104,28 @@ Two layers: **scaffolding** (canonical papers, to build and validate `core/`) an
 | `eq-f5-alphaportfolio` | AlphaPortfolio (Cong et al. 2021) | ☐ | — |
 | `llm-f3-llm-embeddings` | Expected Returns & LLMs (Chen-Kelly-Xiu 2023) | ☐ | — |
 | `cr-f2-text-returns-sestm` | Predicting Returns with Text (Ke-Kelly-Xiu 2019) | ☐ | — |
+| `llm-f2`, `llm-f4` | LLM-reasoning papers (financial statements, corporate policies) | ☐ | deferred (need local LLM) |
+
+### 🟥 Sell-side — pricing, execution & bank risk
+| ID | Paper / Project | Status | Headline result |
+|----|-----------------|--------|-----------------|
+| `vo-00-har-optiver` | HAR realized-volatility (Corsi 2009) | ✅ | OOS R² 0.50 vs 0.40 random-walk (−17.5% error) |
+| `rk-01-var-es-backtesting` | VaR/ES + Basel backtesting (Kupiec, Christoffersen, FRTB) | ✅ | Passes coverage but breaches **cluster** → motivates vol-scaled VaR/ES; Basel GREEN |
+| `rk-02-cva-exposure` | Counterparty exposure & CVA (EPE/PFE, Monte-Carlo) | ☐ | — |
+| `rk-03-credit-risk` | Merton distance-to-default + portfolio loss / economic capital | ☐ | — |
+| `rk-04-evt-copulas` | Extreme Value Theory + copulas for tail risk | ☐ | — |
+| `vo-f1-deep-hedging` | Deep Hedging (Buehler et al. 2019) | ✅ | Beats Black-Scholes delta on mean + tail under costs |
 | `vo-f2-rough-vol` | Volatility Is Rough (Gatheral et al. 2018) | ☐ | — |
 | `vo-f3-deep-vol-calib` | Deep Learning Volatility (Horvath et al. 2021) | ☐ | — |
 | `vo-f4-quant-gans` | Quant GANs (Wiese et al. 2020) | ☐ | — |
 | `ms-f1-deeplob` | DeepLOB (Zhang-Zohren-Roberts 2019) | ☐ | — |
 | `ms-f2-price-formation` | Universal Price Formation (Sirignano-Cont 2019) | ☐ | — |
 | `ms-f3-rl-execution` | Deep RL Optimal Execution (Ning et al. 2021) | ☐ | — |
-| `llm-f2-fin-statements`, `llm-f4-chatgpt-corporate` | LLM-reasoning papers | ☐ | deferred (need local LLM) |
+| `rk-f1-differential-ml` | Differential Machine Learning (Huge & Savine 2020, Danske Bank) | ☐ | — |
+| `rk-f2-deep-xva` | Deep learning for XVA / neural CVA | ☐ | — |
+| `rk-f3-ml-var` | Quantile-regression neural nets for VaR/ES | ☐ | — |
 
-> **9 of 23 implemented.** Run `python program.py` for the live board.
+> **10 of 30 implemented.** Run `python program.py` for the live board.
 
 ---
 
@@ -145,11 +159,12 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 python program.py
 
 # 3. Run any paper end-to-end (downloads data, backtests, writes results/)
-python "Papers/mx-00-tsmom/implementation.py"
+python "Papers/buy_side/mx-00-tsmom/implementation.py"
+python "Papers/sell_side/rk-01-var-es-backtesting/implementation.py"
 ```
 
 Each paper prints a summary and saves charts/tables to its own `results/` folder; read
-`Papers/<id>/replication_report.md` for the verdict.
+`Papers/<side>/<id>/replication_report.md` for the verdict.
 
 ---
 
